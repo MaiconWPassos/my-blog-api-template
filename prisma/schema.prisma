@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(uuid())
+  username     String         @unique
+  name         String
+  email        String
+  password     String
+  post         Post[]
+  RefreshToken RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String @id @default(uuid())
+  expires_in Int
+  user       User   @relation(fields: [user_id], references: [id])
+  user_id    String
+
+  @@map("refresh_tokens")
+}
+
+model Post {
+  id         String @id @default(uuid())
+  author     User   @relation(fields: [author_id], references: [id])
+  author_id  String // relation scalar field  (used in the `@relation` attribute above)
+  title      String
+  content    String
+  video_url  String
+  github_url String
+
+  @@map("posts")
+}
